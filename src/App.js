@@ -1,9 +1,14 @@
-import { Button } from 'react-bootstrap';
-import './App.css';
+import BootstrapNavbar from './components/BootstrapNavbar';
+import Board from './components/Board';
 
 function App() {
   return (
-    <Button variant='primary'>btn</Button>
+    <div>
+      <BootstrapNavbar />
+
+      <Board />
+    </div>
+
     )
 }
 

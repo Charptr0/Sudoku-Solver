@@ -1,0 +1,36 @@
+:root {
+    --box-size: 70px;
+}
+
+#game_board
+{
+    text-align: center;
+}
+
+table
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+tbody 
+{ 
+    border: 3px solid black; 
+}
+
+td 
+{ 
+    border: solid thin; 
+    height: var(--box-size);
+    width: var(--box-size); 
+}
+
+@media only screen and (max-height: 800px) {
+    table
+    {
+        position: relative;
+        margin-top: 350px;
+    }
+}
