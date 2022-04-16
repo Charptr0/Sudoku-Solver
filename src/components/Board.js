@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "./board.module.css";
 import Options from "./Options";
 
@@ -32,6 +32,25 @@ function Board()
 		"r8c0" : useRef(null),"r8c1" : useRef(null),"r8c2" : useRef(null),"r8c3" : useRef(null),"r8c4" : useRef(null),
         "r8c5" : useRef(null),"r8c6" : useRef(null),"r8c7" : useRef(null),"r8c8" : useRef(null),
     }
+
+	useEffect(() => {
+		const data = [
+			0,6,5,2,0,8,1,4,7,
+			0,2,1,0,7,0,0,0,0,
+			0,3,4,9,1,5,0,8,6,
+			6,0,0,5,0,0,3,1,0,
+			5,0,7,0,0,0,0,2,8,
+			0,0,8,0,9,0,0,0,0,
+			1,0,0,0,0,0,0,0,3,
+			0,0,0,0,6,9,8,7,0,
+			0,0,6,8,0,3,0,0,0];
+
+		Object.keys(refs).forEach((key, index)=> {
+			if(data[index] !== 0) {
+				refs[key].current.value = data[index];
+			}
+		})
+	}, [])
 
     function solve()
     {
