@@ -24,6 +24,7 @@ tbody
 td 
 { 
     text-align: center;
+    font-size: 25px;
     border: solid thin; 
     height: var(--box-size);
     width: var(--box-size); 
