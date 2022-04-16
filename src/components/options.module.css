@@ -1,12 +1,5 @@
 #options_div
 {
     text-align: center;
-}
-
-@media only screen and (max-height: 800px) {
-    #options_div
-    {
-        margin-top: -300px;
-    }
-
+    margin-top: 10px;
 }
