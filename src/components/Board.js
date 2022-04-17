@@ -2,9 +2,41 @@ import React, { useEffect, useRef } from "react";
 import styles from "./board.module.css";
 import Options from "./Options";
 
-function Board()
+function flatten(data)
 {
-    const refs = {
+	const flattenBoard = []
+
+	data.forEach((row) => {
+		row.forEach((val) => {
+			flattenBoard.push(val);
+		})
+	})
+
+	return flattenBoard;
+}
+
+function isValidSquare(board, input, row, col)
+{	
+	let temp = []
+
+	// check row
+	for(let i = 0; i < board[row].length; i++) {
+		if(board[row][i] === 0) return false;
+		else temp.push(board[row][i]);
+	}
+
+	temp.sort();
+
+	for(let i = 0; i < temp.length; i++) {
+		if(temp[i] !== (i + 1)) return false;
+	}
+
+	return true;
+}
+
+function Board()
+{	
+	const refs = {
 		"r0c0" : useRef(null),"r0c1" : useRef(null),"r0c2" : useRef(null),"r0c3" : useRef(null),"r0c4" : useRef(null),
         "r0c5" : useRef(null),"r0c6" : useRef(null),"r0c7" : useRef(null),"r0c8" : useRef(null),
 
@@ -35,33 +67,32 @@ function Board()
 
 	useEffect(() => {
 		const data = [
-			0,6,5,2,0,8,1,4,7,
-			0,2,1,0,7,0,0,0,0,
-			0,3,4,9,1,5,0,8,6,
-			6,0,0,5,0,0,3,1,0,
-			5,0,7,0,0,0,0,2,8,
-			0,0,8,0,9,0,0,0,0,
-			1,0,0,0,0,0,0,0,3,
-			0,0,0,0,6,9,8,7,0,
-			0,0,6,8,0,3,0,0,0];
+			[3,6,5,2,9,8,1,4,7],
+			[0,2,1,0,7,0,0,0,0],
+			[0,3,4,9,1,5,0,8,6],
+			[6,0,0,5,0,0,3,1,0],
+			[5,0,7,0,0,0,0,2,8],
+			[0,0,8,0,9,0,0,0,0],
+			[1,0,0,0,0,0,0,0,3],
+			[0,0,0,0,6,9,8,7,0],
+			[0,0,6,8,0,3,0,0,0]];
+		
+		const flattenBoard = flatten(data);
 
 		Object.keys(refs).forEach((key, index)=> {
-			if(data[index] !== 0) {
-				refs[key].current.value = data[index];
+			if(flattenBoard[index] !== 0) {
+				refs[key].current.value = flattenBoard[index];
 			}
 		})
-	}, [])
+	})
 
+	// solve button handler
     function solve()
     {
-        if(refs.r0c0.current.value === "") {
-			console.log("true");
-        }
-        else {
-			console.log(refs.r0c0.current.value);
-        }
+
     }
 
+	// clear button handler
     function clearBoard()
     {
         Object.keys(refs).forEach((key) => {
@@ -69,9 +100,52 @@ function Board()
         })
     }
 
+	// validate button handler
+	function validate()
+	{
+		const board = []
+		
+		let row = []
+
+		Object.keys(refs).forEach((k) => {
+			const input = refs[k].current.value === "" ? 0 : parseInt(refs[k].current.value);
+
+			if(row.length < 9) {
+				row.push(input);
+			}
+
+			else {
+				board.push(row);
+				row = []
+				row.push(input);
+			}
+		})
+
+		// push the last row
+		board.push(row);
+		
+		board.forEach((row, rowCount) => {
+			row.forEach((val, colCount) => {
+				
+				if(isValidSquare(board, val, rowCount, colCount)) {					
+					const id = "r" + rowCount + "c" + colCount;
+					refs[id].current.style.backgroundColor = "green";
+				}
+
+				else {
+					console.log("wrong");
+					return;
+				}
+
+			})
+		})
+
+		
+	}
+
     return (
             <div id={styles.game_board}><h1>Sudoku Solver</h1>
-            <Options solve={solve} clear={clearBoard} />
+            <Options solve={solve} clear={clearBoard} validate={validate} />
 			<table> 
                 <tbody>
 					<tr>
