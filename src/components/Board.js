@@ -2,6 +2,10 @@ import React, { useEffect, useRef } from "react";
 import styles from "./board.module.css";
 import Options from "./Options";
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function flatten(data)
 {
 	const flattenBoard = []
@@ -15,7 +19,7 @@ function flatten(data)
 	return flattenBoard;
 }
 
-function isValidSquare(board, input, row, col)
+function isValidSquare(board, row, col)
 {	
 	let temp = []
 
@@ -123,24 +127,29 @@ function Board()
 
 		// push the last row
 		board.push(row);
-		
-		board.forEach((row, rowCount) => {
-			row.forEach((val, colCount) => {
-				
-				if(isValidSquare(board, val, rowCount, colCount)) {					
-					const id = "r" + rowCount + "c" + colCount;
-					refs[id].current.style.backgroundColor = "green";
+
+		async function validateHelper()
+		{
+			for(let i = 0; i < board.length; i++) {
+				for(let j = 0; j < board[i].length; j++) {
+					const id = "r" + i + "c" + j;
+					
+					refs[id].current.style.backgroundColor = "orange";
+
+					if(isValidSquare(board, i, j)) {					
+						await sleep(1000); 
+						refs[id].current.style.backgroundColor = "green";
+					}
+
+					else {
+						refs[id].current.style.backgroundColor = "red";
+						return;
+					}
 				}
-
-				else {
-					console.log("wrong");
-					return;
-				}
-
-			})
-		})
-
+			}
+		}
 		
+		validateHelper();		
 	}
 
     return (
