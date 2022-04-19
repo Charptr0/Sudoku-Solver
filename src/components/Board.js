@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import styles from "./board.module.css";
 import Options from "./Options";
-import {flatten, isValidSquare, findAvailableNumbers} from "./helper.js";
+import {flatten, isValidSquare, findAvailableNumbers, Block} from "./helper.js";
 
 function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms))
@@ -86,38 +86,46 @@ function Board()
 		// push the last row
 		board.push(row);
 
-		async function solveHelper(row, col, solved = false) {
-			if(col > 8) {
-				solveHelper(row + 1, 0);
-				return;
-			}
+		async function solveHelper() {
+			let row = 0;
+			let col = 0;
+			const top = (stack) => stack[stack.length - 1];
 
-			if(row > 8) {
-				solved = true;
-				return;
-			}
+			const stack = [];
+			stack.push(new Block("r0c0", 0, 0, findAvailableNumbers(board, 0, 0)));
 
-			const id = "r" + row + "c" + col;
+			while(stack.length > 0 || row <= 8)
+			{
+				await sleep(50);
 
-			changeColor(id, "orange");
-
-			await sleep(100);
-
-			if(board[row][col] === 0) {			
-				const availableNums = findAvailableNumbers(board, row, col);
-
-				while(availableNums.length > 0) {
-
+				if(col > 8) {
+					col = 0;
+					row++;
+					continue;
 				}
+
+				if(row > 8) break;
+
+				const id = "r" + row + "c" + col;
+
+				if(board[row][col] === 0 || refs[id].current.style.backgroundColor === "green") {
+					changeColor(id, "green");
+				}
+
+				else {
+					changeColor(id, "yellow");
+				}
+
+				col++;
 			}
 
-			if(!solved) {
-				solveHelper(row, col + 1);
-			}
+			console.log("here");
+
+
 		}
 
-		// solveHelper(0, 0);
-		console.log(findAvailableNumbers(board, 0, 0));
+		solveHelper();
+
     }
 
 	// clear button handler

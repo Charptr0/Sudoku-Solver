@@ -1,3 +1,13 @@
+export class Block 
+{
+	constructor(id, row, col, availableNumbers) {
+		this.id = id;
+		this.row = row;
+		this.col = col;
+		this.availableNumbers = availableNumbers;
+	}
+}
+
 export function flatten(data)
 {
 	const flattenBoard = []
