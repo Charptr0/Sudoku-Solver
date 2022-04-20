@@ -1,13 +1,3 @@
-export class Block 
-{
-	constructor(id, row, col, availableNumbers) {
-		this.id = id;
-		this.row = row;
-		this.col = col;
-		this.availableNumbers = availableNumbers;
-	}
-}
-
 export function flatten(data)
 {
 	const flattenBoard = []
@@ -133,100 +123,31 @@ export function isValidSquare(board, row, col)
 	return false;
 }
 
-export function findAvailableNumbers(board, row, col)
+export function isAvailable(board, row, col, n)
 {
-    const rowNumSet = new Set();
-    const colNumSet = new Set();
-    const squareNumSet = new Set();
-
     // get row numbers
     for(let i = 0; i < board.length; i++) {
-        if(board[row][i] !== 0) {
-            rowNumSet.add(board[row][i]);
+        if(board[row][i] === n) {
+            return false;
         }
     }
 
     // get col numbers
     for(let i = 0; i < board.length; i++) {
-        if(board[i][col] !== 0) {
-            colNumSet.add(board[i][col]);
+        if(board[i][col] === n) {
+			return false;
         }
     }
     
     // get square numbers
-    // check the first square
-	if(row <= 2 && col <= 2) {
-        squareNumSet.add(board[0][0]); squareNumSet.add(board[0][1]); squareNumSet.add(board[0][2]);
-        squareNumSet.add(board[1][0]); squareNumSet.add(board[1][1]); squareNumSet.add(board[1][2]);
-        squareNumSet.add(board[2][0]); squareNumSet.add(board[2][1]); squareNumSet.add(board[2][2]);
+	let startRow = row - (row % 3);
+	let startCol = col - (col % 3);
+
+	for(let i = 0; i < 3; i++) {
+		for(let j = 0; j < 3; j++) {
+			if (board[i + startRow][j + startCol] == n) return false;
+		}
 	}
 
-	// check the second square
-	else if(col >= 3 && col <= 5 && row <= 2) {
-        squareNumSet.add(board[0][3]); squareNumSet.add(board[0][4]); squareNumSet.add(board[0][5]);
-        squareNumSet.add(board[1][3]); squareNumSet.add(board[1][4]); squareNumSet.add(board[1][5]);
-        squareNumSet.add(board[2][3]); squareNumSet.add(board[2][4]); squareNumSet.add(board[2][5]);
-	}
-
-	// check the third square
-	else if(col >= 6 && col <= 8 && row <= 2) {
-        squareNumSet.add(board[0][6]); squareNumSet.add(board[0][7]); squareNumSet.add(board[0][8]);
-        squareNumSet.add(board[1][6]); squareNumSet.add(board[1][7]); squareNumSet.add(board[1][8]);
-        squareNumSet.add(board[2][6]); squareNumSet.add(board[2][7]); squareNumSet.add(board[2][8]);
-	}
-
-	// check the fourth square
-	else if(row >= 3 && row <= 5 && col <= 2) {
-        squareNumSet.add(board[3][0]); squareNumSet.add(board[3][1]); squareNumSet.add(board[3][2]);
-        squareNumSet.add(board[4][0]); squareNumSet.add(board[4][1]); squareNumSet.add(board[4][2]);
-        squareNumSet.add(board[5][0]); squareNumSet.add(board[5][1]); squareNumSet.add(board[5][2]);
-	}
-
-	// check the fifth square
-	else if(row >= 3 && row <= 5 && col >= 3 && col <= 5) {
-		squareNumSet.add(board[3][3]); squareNumSet.add(board[3][4]); squareNumSet.add(board[3][5]);
-        squareNumSet.add(board[4][3]); squareNumSet.add(board[4][4]); squareNumSet.add(board[4][5]);
-        squareNumSet.add(board[5][3]); squareNumSet.add(board[5][4]); squareNumSet.add(board[5][5]);
-	}
-
-	// check the sixth square
-	else if(row >= 3 && row <= 5 && col >= 6 && col <= 8) {
-        squareNumSet.add(board[3][6]); squareNumSet.add(board[3][7]); squareNumSet.add(board[3][8]);
-        squareNumSet.add(board[4][6]); squareNumSet.add(board[4][7]); squareNumSet.add(board[4][8]);
-        squareNumSet.add(board[5][6]); squareNumSet.add(board[5][7]); squareNumSet.add(board[5][8]);
-	}
-
-	// check the seventh square
-	else if(row >= 6 && row <= 8 && col <= 2) {
-        squareNumSet.add(board[6][0]); squareNumSet.add(board[6][1]); squareNumSet.add(board[6][2]);
-        squareNumSet.add(board[7][0]); squareNumSet.add(board[7][1]); squareNumSet.add(board[7][2]);
-        squareNumSet.add(board[8][0]); squareNumSet.add(board[8][1]); squareNumSet.add(board[8][2]);
-	}
-
-	// check the eighth square
-	else if(row >= 6 && row <= 8 && col >= 3 && col <= 5) {
-        squareNumSet.add(board[6][3]); squareNumSet.add(board[6][4]); squareNumSet.add(board[6][5]);
-        squareNumSet.add(board[7][3]); squareNumSet.add(board[7][4]); squareNumSet.add(board[7][5]);
-        squareNumSet.add(board[8][3]); squareNumSet.add(board[8][4]); squareNumSet.add(board[8][5]);
-	}
-
-	// check the ninth square
-	else if(row >= 6 && row <= 8 && col >= 6 && col <= 8) {
-        squareNumSet.add(board[6][6]); squareNumSet.add(board[6][7]); squareNumSet.add(board[6][8]);
-        squareNumSet.add(board[7][6]); squareNumSet.add(board[7][7]); squareNumSet.add(board[7][8]);
-        squareNumSet.add(board[8][6]); squareNumSet.add(board[8][7]); squareNumSet.add(board[8][8]);
-	}
-
-    // remove 0s
-    squareNumSet.delete(0);
-
-    const possibleNumbers = [];
-
-    for(let i = 1; i < 10; i++) {
-        if((!(rowNumSet.has(i)) && !(colNumSet.has(i)) && !(squareNumSet.has(i)))) {
-            possibleNumbers.push(i);
-        }
-    }
-
-    return possibleNumbers;
+	return true;
 }

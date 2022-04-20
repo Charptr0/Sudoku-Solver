@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import styles from "./board.module.css";
 import Options from "./Options";
-import {flatten, isValidSquare, findAvailableNumbers, Block} from "./helper.js";
+import {flatten, isValidSquare, isAvailable} from "./helper.js";
 
 function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms))
@@ -40,21 +40,22 @@ function Board()
 
 	useEffect(() => {
 		const data = [
-			[0,2,7,1,5,0,0,9,6],
-			[9,0,5,0,2,7,1,4,8],
-			[0,0,1,6,8,9,0,5,2],
-			[5,9,3,0,6,0,0,7,1],
-			[4,7,2,5,0,3,6,0,9],
-			[0,1,8,0,7,0,4,3,5],
-			[7,0,6,2,3,5,0,1,4],
-			[1,5,4,7,9,6,8,0,0],
-			[0,0,9,0,4,1,5,6,0]];
+			[0,0,0,0,0,6,0,4,0],
+			[0,3,4,0,0,0,0,1,7],
+			[5,9,0,0,7,0,0,0,8],
+			[9,2,1,4,3,0,8,7,0],
+			[0,0,0,0,0,1,3,9,0],
+			[0,4,8,7,6,9,5,2,0],
+			[0,0,5,0,0,0,0,0,9],
+			[0,0,0,5,4,0,0,8,0],
+			[4,1,0,6,0,8,0,0,0]];
 		
 		const flattenBoard = flatten(data);
 
 		Object.keys(refs).forEach((key, index)=> {
 			if(flattenBoard[index] !== 0) {
 				refs[key].current.value = flattenBoard[index];
+				refs[key].current.disabled = true; 
 			}
 		})
 	})
@@ -86,107 +87,42 @@ function Board()
 		// push the last row
 		board.push(row);
 
-		async function solveHelper() {
-			let row = 0;
-			let col = 0;
-			let isNewBlock = true;
-			const top = (stack) => stack[stack.length - 1];
-
-			const stack = [];
-
-			while(stack.length > 0 || row <= 8)
-			{
-				await sleep(200);
-
-				// we have processed all columns, go to the next row
-				if(col > 8) {
-					col = 0;
-					row++;
-					continue;
-				}
-				
-				// we have processed all columns and rows, exit the loop
-				if(row > 8) break;
-
-				const id = "r" + row + "c" + col;
-					
-				// we are backtracking
-				if(!isNewBlock) {
-					if(stack.length === 0) {
-						alert("no solutions found");
-						break;
-					}
-
-					// get the top block
-					const block = top(stack);
-
-					// if no numbers works, backtrack again
-					if(block.availableNumbers.length === 0) {
-						stack.pop();
-
-						const prevBlock = top(stack);
-						row = prevBlock.row;
-						col = prevBlock.col;
-						continue;
-					}
-
-					else {		
-						const num = block.availableNumbers.pop();
-
-						board[row][col] = num;
-						refs[id].current.value = num;
-
-						isNewBlock = true;
-						
-						col++;
-						continue;
-					}
-				}
-
-				// encounter a new block
-				else if(board[row][col] === 0 || refs[id].current.style.backgroundColor === "green") {
-					changeColor(id, "green");
-					// push to stack
-					stack.push(new Block(id, row, col, findAvailableNumbers(board, row, col)));
-
-					// get the top of the stack
-					const block = top(stack);
-					
-					// no numbers work for this block, go back to the previous block
-					if(block.availableNumbers.length === 0) {
-						stack.pop(); // pop the current block
-
-						const prevBlock = top(stack); // get the last block 
-						
-						// set the row and col equal to the last block
-						row = prevBlock.row;
-						col = prevBlock.col;
-						isNewBlock = false;
-						continue;
-					}
-
-					else {
-						const num = block.availableNumbers.pop();
-	
-						board[row][col] = num;
-						refs[id].current.value = num;
-						col++;
-					}
-				}
-
-				// the block is filled with a number already
-				else {
-					changeColor(id, "yellow");
-					col++;
-				}
-
+		function solveHelper(board, row, col) {
+			if(col === 9) {
+				return solveHelper(board, row + 1, 0);
 			}
 
-			console.log(stack.length);
-			validate();
+			else if(row === 9) {
+				return true;
+			}
+
+			if(board[row][col] !== 0) {
+				return solveHelper(board, row, col + 1);
+			}
+
+			const id = "r" + row + "c" + col;
+
+			for(let i = 1; i <= 9; i++) {
+				if(isAvailable(board, row, col, i)) {
+					board[row][col] = i;
+					refs[id].current.value = i;
+
+					if(solveHelper(board, row, col + 1)) 
+						return true;
+				}
+
+				board[row][col] = 0;
+				refs[id].current.value = "";
+			}	
+
+			return false;
 		}
 
-		solveHelper();
+		if(solveHelper(board, 0, 0)) {
+			alert("Solved")
+		} else {
+			alert("no solutions found")
+		}
     }
 
 	// clear button handler
