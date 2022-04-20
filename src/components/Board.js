@@ -89,43 +89,104 @@ function Board()
 		async function solveHelper() {
 			let row = 0;
 			let col = 0;
+			let isNewBlock = true;
 			const top = (stack) => stack[stack.length - 1];
 
 			const stack = [];
-			stack.push(new Block("r0c0", 0, 0, findAvailableNumbers(board, 0, 0)));
 
 			while(stack.length > 0 || row <= 8)
 			{
-				await sleep(50);
+				await sleep(200);
 
+				// we have processed all columns, go to the next row
 				if(col > 8) {
 					col = 0;
 					row++;
 					continue;
 				}
-
+				
+				// we have processed all columns and rows, exit the loop
 				if(row > 8) break;
 
 				const id = "r" + row + "c" + col;
+					
+				// we are backtracking
+				if(!isNewBlock) {
+					if(stack.length === 0) {
+						alert("no solutions found");
+						break;
+					}
 
-				if(board[row][col] === 0 || refs[id].current.style.backgroundColor === "green") {
-					changeColor(id, "green");
+					// get the top block
+					const block = top(stack);
+
+					// if no numbers works, backtrack again
+					if(block.availableNumbers.length === 0) {
+						stack.pop();
+
+						const prevBlock = top(stack);
+						row = prevBlock.row;
+						col = prevBlock.col;
+						continue;
+					}
+
+					else {		
+						const num = block.availableNumbers.pop();
+
+						board[row][col] = num;
+						refs[id].current.value = num;
+
+						isNewBlock = true;
+						
+						col++;
+						continue;
+					}
 				}
 
+				// encounter a new block
+				else if(board[row][col] === 0 || refs[id].current.style.backgroundColor === "green") {
+					changeColor(id, "green");
+					// push to stack
+					stack.push(new Block(id, row, col, findAvailableNumbers(board, row, col)));
+
+					// get the top of the stack
+					const block = top(stack);
+					
+					// no numbers work for this block, go back to the previous block
+					if(block.availableNumbers.length === 0) {
+						stack.pop(); // pop the current block
+
+						const prevBlock = top(stack); // get the last block 
+						
+						// set the row and col equal to the last block
+						row = prevBlock.row;
+						col = prevBlock.col;
+						isNewBlock = false;
+						continue;
+					}
+
+					else {
+						const num = block.availableNumbers.pop();
+	
+						board[row][col] = num;
+						refs[id].current.value = num;
+						col++;
+					}
+				}
+
+				// the block is filled with a number already
 				else {
 					changeColor(id, "yellow");
+					col++;
 				}
 
-				col++;
 			}
 
-			console.log("here");
-
-
+			console.log(stack.length);
+			validate();
 		}
 
 		solveHelper();
-
     }
 
 	// clear button handler

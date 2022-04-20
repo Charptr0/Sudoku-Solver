@@ -135,8 +135,6 @@ export function isValidSquare(board, row, col)
 
 export function findAvailableNumbers(board, row, col)
 {
-    if(board[row][col] !== 0) return [];
-
     const rowNumSet = new Set();
     const colNumSet = new Set();
     const squareNumSet = new Set();
