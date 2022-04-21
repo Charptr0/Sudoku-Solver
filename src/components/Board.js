@@ -55,7 +55,6 @@ function Board()
 		Object.keys(refs).forEach((key, index)=> {
 			if(flattenBoard[index] !== 0) {
 				refs[key].current.value = flattenBoard[index];
-				refs[key].current.disabled = true; 
 			}
 		})
 	})
@@ -107,8 +106,7 @@ function Board()
 					board[row][col] = i;
 					refs[id].current.value = i;
 
-					if(solveHelper(board, row, col + 1)) 
-						return true;
+					if(solveHelper(board, row, col + 1)) return true;
 				}
 
 				board[row][col] = 0;
@@ -118,10 +116,8 @@ function Board()
 			return false;
 		}
 
-		if(solveHelper(board, 0, 0)) {
-			alert("Solved")
-		} else {
-			alert("no solutions found")
+		if(!solveHelper(board, 0, 0)) {
+			alert("No solutions found")
 		}
     }
 
