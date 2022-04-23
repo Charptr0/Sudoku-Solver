@@ -1,14 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./board.module.css";
 import Options from "./Options";
-import {flatten, isValidSquare, isAvailable} from "./helper.js";
+import {isValidSquare, isAvailable} from "./helper.js";
 
 function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 function Board()
-{	
+{
+	const [isLoading, setLoading] = useState(true);
+
 	const refs = {
 		"r0c0" : useRef(null),"r0c1" : useRef(null),"r0c2" : useRef(null),"r0c3" : useRef(null),"r0c4" : useRef(null),
         "r0c5" : useRef(null),"r0c6" : useRef(null),"r0c7" : useRef(null),"r0c8" : useRef(null),
@@ -39,25 +41,19 @@ function Board()
     }
 
 	useEffect(() => {
-		const data = [
-			[0,0,0,0,0,6,0,4,0],
-			[0,3,4,0,0,0,0,1,7],
-			[5,9,0,0,7,0,0,0,8],
-			[9,2,1,4,3,0,8,7,0],
-			[0,0,0,0,0,1,3,9,0],
-			[0,4,8,7,6,9,5,2,0],
-			[0,0,5,0,0,0,0,0,9],
-			[0,0,0,5,4,0,0,8,0],
-			[4,1,0,6,0,8,0,0,0]];
-		
-		const flattenBoard = flatten(data);
+		fetch("http://localhost:5000/board")
+			.then(res => res.json())
+			.then((data) => {
+				const board = data;
+				Object.keys(refs).forEach((key, index)=> {
+					if(board[index] !== 0) {
+						refs[key].current.value = board[index];
+					} else refs[key].current.value = "";
+				})
 
-		Object.keys(refs).forEach((key, index)=> {
-			if(flattenBoard[index] !== 0) {
-				refs[key].current.value = flattenBoard[index];
-			}
-		})
-	})
+				setLoading(false);
+			});
+	}, [isLoading])
 
 	function changeColor(id, color) {
 		refs[id].current.style.backgroundColor = color;
@@ -179,9 +175,14 @@ function Board()
 		validateHelper();		
 	}
 
+	function regenerate() 
+	{
+		setLoading(true);
+	}
+
     return (
-            <div id={styles.game_board}><h1>Sudoku Solver</h1>
-            <Options solve={solve} clear={clearBoard} validate={validate} />
+            <div id={styles.game_board}>{isLoading ? <h1>Sudoku Solver (Fetching sample data from database...)</h1> : <h1>Sudoku Solver</h1>}
+            <Options solve={solve} clear={clearBoard} validate={validate} regenerate={regenerate} />
 			<table> 
                 <tbody>
 					<tr>
