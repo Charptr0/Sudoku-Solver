@@ -17,4 +17,9 @@ Build with React, Bootstrap, and deployed with firebase
 ### Backend
 https://generate-sudoku-boards.herokuapp.com/
 
-Build with Express and MongoDB, and deployed with Heroku
+Build with Express, MongoDB, and deployed with Heroku
+
+## Screenshots
+<img src="https://user-images.githubusercontent.com/70610982/164991195-6247f5f8-09bb-43b1-aa20-8c9122c75012.png" width=80%>
+<img src="https://user-images.githubusercontent.com/70610982/164991240-f3ddec87-9ada-498d-a6a4-f761855fe4c5.png" width=80%>
+
