@@ -24,3 +24,10 @@ yarn-error.log*
 
 # VS Code stuff
 .vscode/
+
+# Backend stuff
+./backend/node_modules/
+./backend/.env
+./backend/Procfile
+
+
