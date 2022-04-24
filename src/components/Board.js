@@ -52,7 +52,8 @@ function Board()
 				})
 
 				setLoading(false);
-			});
+			})
+			.catch(err => console.log(err));
 	}, [isLoading])
 
 	function changeColor(id, color) {
@@ -122,6 +123,7 @@ function Board()
     {
         Object.keys(refs).forEach((key) => {
 			refs[key].current.value = "";
+			changeColor(key, "white");
         })
     }
 

@@ -11,6 +11,7 @@
 table
 {
     position: absolute;
+    margin-top: -10px;
     top: 58%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -43,6 +44,6 @@ input
     table
     {
         position: relative;
-        margin-top: 400px;
+        margin-top: 350px;
     }
 }
