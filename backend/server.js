@@ -13,6 +13,9 @@ app.use(express.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + '/views'));
 
+/**
+ * Convert a 2D board into a 1D board 
+ */
 function flatten(board)
 {
 	const flattenBoard = [];
@@ -92,6 +95,7 @@ function validateBoard(req, res, next)
 		}
 	}
 
+	// validate each cell
 	for(let i = 0; i < board.length; i++) {
 		for(let j = 0; j < board.length; j++) {
 			if(board[i][j] === '') {
@@ -114,6 +118,7 @@ function validateBoard(req, res, next)
 		board : flattenBoard
 	});
 
+	// save to db
 	sudokuBoard.save()
 		.then((result) => {
 			console.log(result);
@@ -151,11 +156,14 @@ app.get("/board", (req, res) => {
 			return;
 		}
 
+		// get a random board from the db
 		const index = Math.floor(Math.random() * result.length);
 		const board = result[index].board;
-		const unSolvedBoard = [];
 
+		// create a unsolved bored
+		const unSolvedBoard = [];
 		board.forEach((val) => {
+			// 50% the cell will be empty
 			if(Math.floor(Math.random() * 100) <= 50) {
 				unSolvedBoard.push(0);
 			}
@@ -165,6 +173,7 @@ app.get("/board", (req, res) => {
 			}
 		})
 
+		// send to browser
 		res.send(unSolvedBoard);
 		})
 		.catch(err => console.log(err));
@@ -180,6 +189,6 @@ db.mongoose.connect(DB_URL, {
 			console.log("DB Connected");
 
 			app.listen(port, () => {
-			console.log(`Example app listening on port ${port}`)});
+			console.log(`App listening on port ${port}`)});
 
 		}).catch(err => console.log(err))
