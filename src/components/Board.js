@@ -41,7 +41,7 @@ function Board()
     }
 
 	useEffect(() => {
-		fetch("http://localhost:5000/board")
+		fetch("https://generate-sudoku-boards.herokuapp.com/board")
 			.then(res => res.json())
 			.then((data) => {
 				const board = data;
